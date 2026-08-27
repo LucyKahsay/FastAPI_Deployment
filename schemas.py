@@ -1,0 +1,69 @@
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
+
+
+# The moment you inherit from BaseModel, Pydantic says:
+# "Great.Since this is a data schema,
+# I'll take care of validating it, parsing it,
+# converting it,and serializing it."
+
+# "BaseModel tells Pydantic that this class is a data schema. "
+# "Pydantic then uses it to validate, parse, and serialize data."
+
+# "BaseModel is the base class provided by Pydantic for creating data schemas."
+# " It lets us describe the structure of our data, and Pydantic automatically "
+# "provides validation, parsing, and serialization based on that structure."
+
+
+class UserBase(BaseModel):
+   username: str = Field(min_length=1, max_length=50)
+   email: EmailStr =Field(max_length=120)
+
+
+class UserCreate(UserBase):
+    password:str = Field(min_length= 8) 
+
+
+class UserPublic(BaseModel):
+    model_config=ConfigDict(from_attributes=True)
+
+    id: int 
+    username: str
+    image_file: str | None
+    image_path: str
+
+class UserPrivate(UserPublic):
+    email: EmailStr
+
+
+class UserUpdate(BaseModel):
+   username: str | None= Field(default= None,min_length=1, max_length=50)
+   email: EmailStr |None =Field(default= None, max_length=120)
+   image_file: str | None= Field(default= None,min_length=1, max_length=200)
+
+# A token is proof that you've 
+# already authenticated yourself.
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class PostBase(BaseModel):
+    title: str =Field(min_length=1, max_length=100)
+    content: str =Field(min_length=1)
+    
+
+class PostCreate(PostBase):
+    pass 
+
+
+class PostUpdate(BaseModel):
+    title: str | None = Field(default= None, min_length=1, max_length=100)
+    content: str | None =Field(default= None, min_length=1)
+
+class PostResponse(PostBase):
+    model_config=ConfigDict(from_attributes=True)
+ 
+    id: int
+    user_id: int
+    date_posted: datetime
+    author: UserPublic

@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section py-3 px-4 mb-4">
+        <h2 class="mb-4">Register</h2>
+        <form id="registerForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text"
+                       class="form-control"
+                       id="username"
+                       name="username"
+                       required
+                       minlength="1"
+                       maxlength="50">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       name="password"
+                       required
+                       minlength="8">
+                <div class="form-text">Must be at least 8 characters.</div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password"
+                       class="form-control"
+                       id="confirmPassword"
+                       name="confirmPassword"
+                       required
+                       minlength="8">
+                <div id="passwordError" class="text-danger d-none">Passwords do not match.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        <p class="mt-3">
+            Already have an account? <a href="{{ url_for("login_page") }}">Login here</a>
+        </p>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script type="module">
+    import { getErrorMessage, showModal } from '/static/js/utils.js';
+
+    const registerForm = document.getElementById('registerForm');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const passwordError = document.getElementById('passwordError');
+
+    // Check passwords match on input
+  
+    confirmPasswordInput.addEventListener('input', () => {
+    // "Listen to the Confirm Password input box. Every time the user 
+    // changes something inside it, run this code."
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        passwordError.classList.remove('d-none');
+        // Find the error message we stored in passwordError, 
+        // access its CSS classes, and remove the d-none class
+        //  so the hidden error message becomes visible.
+        confirmPasswordInput.setCustomValidity('Passwords do not match');
+        // Tell the browser that this input is invalid.
+        // "Attach a custom validation error to the Confirm 
+        // Password input and tell the browser that this 
+        // input is currently invalid."
+        
+      } else {
+        passwordError.classList.add('d-none');
+        // Add d-none back, which hides the error message again
+        confirmPasswordInput.setCustomValidity('');
+      }
+    });
+
+    registerForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // Check passwords match
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        passwordError.classList.remove('d-none');
+        return;
+      }
+
+      const formData = new FormData(registerForm);
+      const userData = {
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+      };
+
+      try {
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        });
+
+        if (response.ok) {
+          // Show success modal and redirect to login
+          document.getElementById('successMessage').textContent =
+            'Account created successfully! Please login.';
+          showModal('successModal');
+
+          document.getElementById('successModal').addEventListener('hidden.bs.modal', () => {
+            window.location.href = '/login';
+          }, { once: true });
+// Success modal closes
+//         ↓
+// window.location.href = '/login'
+//         ↓
+// Browser goes to /login
+//         ↓
+// GET /login
+//         ↓
+// Your FastAPI endpoint:
+
+// @app.get("/login")
+
+//         ↓
+// login.html is returned
+        } else {
+          const error = await response.json();
+          document.getElementById('errorMessage').textContent = getErrorMessage(error);
+          showModal('errorModal');
+        }
+      } catch (error) {
+        document.getElementById('errorMessage').textContent =
+          'Network error. Please check your connection and try again.';
+        showModal('errorModal');
+      }
+    });
+    </script>
+{% endblock scripts %}
