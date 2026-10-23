@@ -27,4 +27,38 @@ export function hideModal(modalId) {
 }
 // "Give me the ID of a modal. I'll find that HTML element, 
 // get its Bootstrap modal object, and if it exists, tell 
-// Bootstrap to close it."
+// Bootstrap to close it."   
+
+
+
+// XSS prevention for dynamic content insertion
+export function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+  // So innerHTML is a property that 
+  // lets you look at the HTML inside an element.
+}
+
+// Date formatting to match server's strftime("%B %d, %Y")
+export function formatDate(dateString) {
+// Backend
+//    ↓
+// "2026-09-18T14:30:00"
+//    ↓
+// new Date(dateString)
+//    ↓
+// JavaScript Date object
+//    ↓
+// toLocaleDateString(...)
+//    ↓
+// "September 18, 2026"
+//    ↓
+// User sees it
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
+}

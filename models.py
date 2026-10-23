@@ -4,6 +4,8 @@ from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Base
 
+from config import settings
+
 # Inheriting from Base is how you tell SQLAlchemy: 
 # "Hey, this isn't just a regular Python class. "
 # "This is a database table."
@@ -21,6 +23,14 @@ class User(Base):
     )
 
     posts: Mapped[list[Post]] = relationship(back_populates="author", cascade= "all, delete-orphan",)
+
+    reset_tokens: Mapped[list[PasswordResetToken]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+# "A User is connected to their reset tokens, and ."
+# "reset_tokens lets me go from the User to those tokens."
+
 # "On the other side of this relationship, there is an attribute called author."
 # Mapped literally means: "This Python variable is directly "
 # "mapped to a live column in the database."
@@ -43,7 +53,7 @@ class User(Base):
     @property
     def image_path(self) -> str:
         if self.image_file:
-            return f"/media/profile_pics/{self.image_file}"
+            return f"https://{settings.s3_bucket_name}.s3.{settings.s3_region}.amazonaws.com/profile_pics/{self.image_file}"
         return "/static/profile_pics/default.jpg"
 
 
@@ -63,6 +73,27 @@ class Post(Base):
         default=lambda: datetime.now(UTC),
     )
 
+    likes: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+
     author: Mapped[User] = relationship(back_populates="posts")
 
-    
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+    )
+
+    user: Mapped[User] = relationship(back_populates="reset_tokens")
+# "A PasswordResetToken is connected to a User, and ."
+# "user lets me go from the token to that User."
