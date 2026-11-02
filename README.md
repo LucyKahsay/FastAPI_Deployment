@@ -1,12 +1,44 @@
-# My FastAPI Blog Application
+# FastAPI Blog Application
 
-I’ve been learning Python and FastAPI and recently built a blog application to put what I’ve learned into practice. The project includes user registration and login, JWT authentication and authorization, and CRUD functionality for posts. I also used HTML, CSS, and JavaScript to build and connect the frontend to the backend.
+A blog application built with Python and FastAPI to develop practical backend engineering skills, including REST API development, database management, authentication, automated testing, and cloud storage integration.
 
-## Key Features Explored:
-- **Backend Framework:** FastAPI (Python)
-- **Security:** Password hashing and secure JWT tokens
-- **Frontend Integration:** Connecting HTML/JS scripts to api endpoints
-- **Database Logic:** Implementing CRUD operations (Create, Read, Update, Delete) for blog posts
+## Features
 
-##  Current Project Status:
-This project is an ongoing, unfinished personal learning tool. I am currently focusing on mastering database relationships and fixing workflow bugs using online videos.
+- User registration and JWT-based authentication
+- Create, read, update, and delete blog posts
+- PostgreSQL integration using SQLAlchemy
+- Database migrations with Alembic
+- Password hashing and password-reset functionality
+- Profile picture uploads with image processing and Amazon S3
+- Paginated blog post listings
+- Automated API testing with pytest and HTTPX
+
+## Tech Stack
+
+- **Language:** Python
+- **Backend:** FastAPI
+- **Database:** PostgreSQL, SQLAlchemy
+- **Migrations:** Alembic
+- **Authentication:** JWT, password hashing
+- **Cloud Storage:** Amazon S3, Boto3
+- **Testing:** pytest, HTTPX, Moto
+- **Frontend:** HTML, CSS, JavaScript, Jinja2
+- **Tools:** Git, GitHub, Linux, AWS EC2
+
+## Skills Demonstrated
+
+- REST API development and HTTP request handling
+- Asynchronous database operations
+- Database modeling and schema migrations
+- Authentication and authorization
+- File validation, image processing, and cloud storage integration
+- Automated testing and debugging
+- Environment-based configuration and Linux server administration
+
+## Project Status
+
+Preparing the application for production deployment on AWS EC2.
+
+## Security
+
+Sensitive configuration values, including database credentials, JWT secrets, and AWS credentials, should be stored in environment variables and never committed to the repository.
