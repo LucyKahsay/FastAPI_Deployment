@@ -1,0 +1,28 @@
+# Secrets
+.env
+.env.*
+
+# Python virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Git
+.git/
+
+# Tests and test caches
+tests/
+test/
+.pytest_cache/
+
+# Local databases
+*.db
+*.sqlite3
+
+# Development tools
+.vscode/
+.ruff_cache/
+.mypy_cache/

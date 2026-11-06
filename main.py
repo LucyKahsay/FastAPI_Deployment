@@ -94,8 +94,35 @@ app.include_router(posts.router, prefix="/api/posts", tags=["posts"])
 # "Jinja, I'm giving you a variable called posts. "
 # "Its value is whatever is stored in my Python variable posts."
 
+## Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
+    if "Referrer-Policy" not in response.headers:
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+    if request.url.hostname not in ("localhost", "127.0.0.1"):
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=63072000; includeSubDomains"
+        )
+
+    return response
+
+
+
+
+
 
 ## Health Check Endpoint
+# This endpoint checks database connectivity, 
+# not whether every part of your application 
+# is healthy. It doesn't test S3, email 
+# delivery, or all your API routes.
 @app.get("/health")
 async def health_check(db: Annotated[AsyncSession, Depends(get_db)]):
     try:
