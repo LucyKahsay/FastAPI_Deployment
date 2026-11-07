@@ -125,8 +125,8 @@ These two deployments demonstrate experience with both traditional virtual machi
 ### 1. Clone the repository
 
 
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd <YOUR_PROJECT_DIRECTORY>
+git clone https://github.com/LucyKahsay/FastAPI_Deployment.git
+cd FastAPI_Deployment
 
 
 ### 2. Create and activate a virtual environment
